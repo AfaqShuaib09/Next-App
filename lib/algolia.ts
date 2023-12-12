@@ -124,7 +124,7 @@ export const getAlgoliaCourseData = async () => {
     productIndex.setSettings({
       paginationLimitedTo: 10000,
     })
-    const data = {};
+    const data: {[key:string]: string} = {};
     let page = 0;
     let nbPages;
     do {

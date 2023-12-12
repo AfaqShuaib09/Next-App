@@ -115,3 +115,35 @@ export const getAlgoliaCourseSlugs = async () => {
 
   return slugs;
 }
+
+export const getAlgoliaCourseData = async () => {
+    const client = algoliasearch(process.env.ALGOLIA_APP_ID || '', process.env.ALGOLIA_ADMIN_KEY || '', {
+      requester: createFetchRequester(), // to use Next.js fetch cache
+    });
+    const productIndex = client.initIndex(process.env.ALGOLIA_INDEX_NAME || '');
+    productIndex.setSettings({
+      paginationLimitedTo: 10000,
+    })
+    const data = {};
+    let page = 0;
+    let nbPages;
+    do {
+      const response = await productIndex.search<{
+        filters: 'product:Course',
+        marketing_url: string;
+        uuid: string;
+      }>('', {
+        attributesToRetrieve: ['marketing_url', 'uuid'],
+        page,
+        hitsPerPage: 10,
+      });
+      page = response.page + 1;
+      nbPages = response.nbPages;
+      response.hits.forEach((hit) => {
+        data[hit.marketing_url.replace('https://www.edx.org/', '')] = hit.uuid;
+      });
+    } while (page < 1);
+  
+    console.log('data lol', data);
+    return data;
+  }

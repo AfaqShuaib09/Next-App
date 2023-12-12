@@ -1,4 +1,4 @@
-import { getAlgoliaCourseBySlug, getAlgoliaCourseSlugs } from '@/lib/algolia';
+import { getAlgoliaCourseBySlug, getAlgoliaCourseSlugs, getAlgoliaCourseData } from '@/lib/algolia';
 import { getDiscoveryCourseByUUID } from '@/lib/discovery';
 import { GetStaticProps } from 'next/types';
 
@@ -11,17 +11,30 @@ export const getStaticPaths = async () => {
   };
 };
 
+// export const getStaticProps: GetStaticProps = async ({ params }) => {
+//   const slug = Array.isArray(params?.slug) ? params?.slug?.join('/') : params?.slug ?? 'noslug';
+//   const algoliaCourse = await getAlgoliaCourseBySlug(slug);
+//   const discoveryCourse = await getDiscoveryCourseByUUID(algoliaCourse?.uuid);
+//   return {
+//     props: {
+//       algoliaCourse,
+//       discoveryCourse,
+//     },
+//   };
+// };
+
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const slug = Array.isArray(params?.slug) ? params?.slug?.join('/') : params?.slug ?? 'noslug';
-  const algoliaCourse = await getAlgoliaCourseBySlug(slug);
-  const discoveryCourse = await getDiscoveryCourseByUUID(algoliaCourse?.uuid);
-  return {
-    props: {
-      algoliaCourse,
-      discoveryCourse,
-    },
+    const slug = Array.isArray(params?.slug) ? params?.slug?.join('/') : params?.slug ?? 'noslug';
+    const data = await getAlgoliaCourseData();
+  //   const algoliaCourse = await getAlgoliaCourseBySlug(slug);
+    const discoveryCourse = await getDiscoveryCourseByUUID(data[slug]);
+    return {
+      props: {
+      //   algoliaCourse,
+        discoveryCourse,
+      },
+    };
   };
-};
 
 export default function Page(props: any) {
   return (

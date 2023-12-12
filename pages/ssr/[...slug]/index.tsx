@@ -1,4 +1,4 @@
-import { getAlgoliaCourseBySlug } from '@/lib/algolia';
+import { getAlgoliaCourseBySlug, getAlgoliaCourseData } from '@/lib/algolia';
 import { getDiscoveryCourseByUUID } from '@/lib/discovery';
 import type { GetServerSideProps } from 'next';
 
@@ -7,19 +7,34 @@ type Repo = {
   stargazers_count: number;
 };
 
+// export const getServerSideProps:GetServerSideProps = (async ({ params }) => {
+//   const slug = Array.isArray(params?.slug)
+//     ? params?.slug?.join('/')
+//     : params?.slug ?? 'noslug';
+//   const algoliaCourse = await getAlgoliaCourseBySlug(slug);
+//   const discoveryCourse = await getDiscoveryCourseByUUID(algoliaCourse?.uuid);
+//   return {
+//     props: {
+//       algoliaCourse,
+//       discoveryCourse,
+//     },
+//   };
+// });
+
 export const getServerSideProps:GetServerSideProps = (async ({ params }) => {
-  const slug = Array.isArray(params?.slug)
-    ? params?.slug?.join('/')
-    : params?.slug ?? 'noslug';
-  const algoliaCourse = await getAlgoliaCourseBySlug(slug);
-  const discoveryCourse = await getDiscoveryCourseByUUID(algoliaCourse?.uuid);
-  return {
-    props: {
-      algoliaCourse,
-      discoveryCourse,
-    },
-  };
-});
+    const slug = Array.isArray(params?.slug)
+      ? params?.slug?.join('/')
+      : params?.slug ?? 'noslug';
+  //   const algoliaCourse = await getAlgoliaCourseBySlug(slug);
+      const data = await getAlgoliaCourseData();
+    const discoveryCourse = await getDiscoveryCourseByUUID(data[slug]);
+    return {
+      props: {
+      //   algoliaCourse,
+        discoveryCourse,
+      },
+    };
+  });
 
 export default function Page(props: any) {
   return (
